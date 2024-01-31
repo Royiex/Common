@@ -239,52 +239,30 @@ struct StrafeSettings{
 	tick_rate:Ratio64,
 }
 
-//Why have a dedicated type for hitbox? surely it can just be a TransformedMesh or something.
-struct Hitbox{
-	halfsize:Planar64Vec3,
-	mesh:PhysicsMesh,
-	transform:integer::Planar64Affine3,
-	normal_transform:Planar64Mat3,
-	transform_det:Planar64,
-}
-impl Hitbox{
-	fn new(mesh:PhysicsMesh,transform:integer::Planar64Affine3)->Self{
-		//calculate extents
-		let mut aabb=aabb::Aabb::default();
-		for vert in mesh.verts(){
-			aabb.grow(transform.transform_point3(vert));
-		}
-		Self{
-			halfsize:aabb.size()/2,
-			mesh,
-			transform,
-			normal_transform:transform.matrix3.inverse_times_det().transpose(),
-			transform_det:transform.matrix3.determinant(),
-		}
-	}
-	fn from_mesh_scale(mesh:PhysicsMesh,scale:Planar64Vec3)->Self{
-		let matrix3=Planar64Mat3::from_diagonal(scale);
-		Self{
-			halfsize:scale,
-			mesh,
-			normal_transform:matrix3.inverse_times_det().transpose(),
-			transform:integer::Planar64Affine3::new(matrix3,Planar64Vec3::ZERO),
-			transform_det:matrix3.determinant(),//scale.x*scale.y*scale.z but whatever
-		}
-	}
-	fn from_mesh_scale_offset(mesh:PhysicsMesh,scale:Planar64Vec3,offset:Planar64Vec3)->Self{
-		let matrix3=Planar64Mat3::from_diagonal(scale);
-		Self{
-			halfsize:scale,
-			mesh,
-			normal_transform:matrix3.inverse_times_det().transpose(),
-			transform:integer::Planar64Affine3::new(matrix3,offset),
-			transform_det:matrix3.determinant(),
-		}
-	}
-	#[inline]
-	fn transformed_mesh(&self)->TransformedMesh{
-		TransformedMesh::new(&self.mesh,&self.transform,&self.normal_transform,self.transform_det)
-	}
+enum HitboxMesh{
+	Box,//source
+	Cylinder,//roblox
+	//Sphere,//roblox old physics
+	//Point,
+	//Line,
+	//DualCone,
 }
 
+struct Hitbox{
+	halfsize:Planar64Vec3,
+	mesh:HitboxMesh,
+}
+impl Hitbox{
+	fn roblox()->Self{
+		Self{
+			halfsize:Planar64Vec3::int(2,5,2)/2,
+			mesh:HitboxMesh::Cylinder,
+		}
+	}
+	fn source()->Self{
+		Self{
+			halfsize:Planar64Vec3::raw(33,73,33)/16/2,
+			mesh:HitboxMesh::Box,
+		}
+	}
+}
