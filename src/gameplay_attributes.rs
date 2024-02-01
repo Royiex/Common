@@ -8,8 +8,9 @@ pub struct ContactingLadder{
 #[derive(Clone,Hash,Eq,PartialEq)]
 pub enum ContactingBehaviour{
 	Surf,
-	Cling,//usable as a zipline, or other weird and wonderful things
 	Ladder(ContactingLadder),
+	NoJump,
+	Cling,//usable as a zipline, or other weird and wonderful things
 	Elastic(u32),//[1/2^32,1] 0=None (elasticity+1)/2^32
 }
 //you have this effect while intersecting

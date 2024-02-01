@@ -1,5 +1,7 @@
+use std::collections::HashMap;
 use crate::integer::{Planar64Vec3,Planar64Affine3};
 use crate::gameplay_attributes;
+use crate::updatable::Updatable;
 
 pub type TextureCoordinate=glam::Vec2;
 pub type Color4=glam::Vec4;
@@ -30,6 +32,8 @@ pub struct IndexedPhysicsGroup{
 	pub groups:Vec<GroupId>,
 }
 //This is a superset of PhysicsModel and GraphicsModel
+#[derive(Clone,Copy,Hash,Eq,PartialEq)]
+pub struct IndexedModelId(u32);
 pub struct IndexedModel{
 	pub unique_pos:Vec<Planar64Vec3>,//Unit32Vec3
 	pub unique_normal:Vec<Planar64Vec3>,//Unit32Vec3
@@ -47,8 +51,28 @@ pub struct IndexedModel{
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub struct ModelId(u32);
 pub struct Model{
-	pub model:ModelId,
+	pub model:IndexedModelId,
 	pub attributes:gameplay_attributes::CollisionAttributesId,
 	pub color:Color4,//transparency is in here
 	pub transform:Planar64Affine3,
+}
+
+pub struct Models{
+	indexed_models:HashMap<IndexedModelId,IndexedModel>,
+	models:HashMap<ModelId,Model>,
+}
+impl Updatable<Models> for Models{
+	fn insert(&mut self,update:Models){
+		self.indexed_models.extend(update.indexed_models);
+		self.models.extend(update.models);
+	}
+	fn remove(&mut self,update:Models){
+		for (indexed_model_id,_) in &update.indexed_models{
+			self.indexed_models.remove(indexed_model_id);
+		}
+		for (model_id,_) in &update.models{
+			self.models.remove(model_id);
+		}
+		todo!("stop cloning models for remove");
+	}
 }

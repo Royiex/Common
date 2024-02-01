@@ -1,8 +1,10 @@
 pub mod bvh;
+pub mod map;
 pub mod aabb;
 pub mod model;
 pub mod zeroes;
 pub mod integer;
+pub mod updatable;
 pub mod instruction;
 pub mod gameplay_modes;
 pub mod gameplay_style;
