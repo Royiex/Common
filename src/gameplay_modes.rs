@@ -49,22 +49,10 @@ pub struct StageUpdate{
 	ordered_checkpoints:HashMap<CheckpointId,ModelId>,
 	unordered_checkpoints:HashSet<ModelId>,
 }
-impl Updatable<&StageUpdate> for Stage{
-	fn insert(&mut self,update:&StageUpdate){
-		for (&checkpoint,&model) in &update.ordered_checkpoints{
-			self.ordered_checkpoints.insert(checkpoint,model);
-		}
-		for &checkpoint in &update.unordered_checkpoints{
-			self.unordered_checkpoints.insert(checkpoint);
-		}
-	}
-	fn remove(&mut self,update:&StageUpdate){
-		for (checkpoint,_) in &update.ordered_checkpoints{
-			self.ordered_checkpoints.remove(checkpoint);
-		}
-		for model in &update.unordered_checkpoints{
-			self.unordered_checkpoints.remove(model);
-		}
+impl Updatable<StageUpdate> for Stage{
+	fn update(&mut self,update:StageUpdate){
+		self.ordered_checkpoints.extend(update.ordered_checkpoints);
+		self.unordered_checkpoints.extend(update.unordered_checkpoints);
 	}
 }
 
@@ -132,38 +120,16 @@ pub struct ModeUpdate{
 	elements:HashMap<ModelId,StageElement>,
 	jump_limit:HashMap<ModelId,u32>,
 }
-impl Updatable<&ModeUpdate> for Mode{
-	fn insert(&mut self,update:&ModeUpdate){
-		for (&model,&zone) in &update.zones{
-			self.zones.insert(model,zone);
-		}
-		for (stage,stage_update) in &update.stages{
+impl Updatable<ModeUpdate> for Mode{
+	fn update(&mut self,update:ModeUpdate){
+		self.zones.extend(update.zones);
+		for (stage,stage_update) in update.stages{
 			if let Some(stage)=self.stages.get_mut(stage.0 as usize){
-				stage.insert(stage_update);
+				stage.update(stage_update);
 			}
 		}
-		for (&model,stage_element) in &update.elements{
-			self.elements.insert(model,stage_element.clone());
-		}
-		for (&model,&limit) in &update.jump_limit{
-			self.jump_limit.insert(model,limit);
-		}
-	}
-	fn remove(&mut self,update:&ModeUpdate){
-		for (model,_) in &update.zones{
-			self.zones.remove(model);
-		}
-		for (stage,stage_update) in &update.stages{
-			if let Some(stage)=self.stages.get_mut(stage.0 as usize){
-				stage.remove(stage_update);
-			}
-		}
-		for (model,_) in &update.elements{
-			self.elements.remove(model);
-		}
-		for (model,_) in &update.jump_limit{
-			self.jump_limit.remove(model);
-		}
+		self.elements.extend(update.elements);
+		self.jump_limit.extend(update.jump_limit);
 	}
 }
 impl ModeUpdate{
@@ -206,18 +172,11 @@ impl Modes{
 pub struct ModesUpdate{
 	modes:HashMap<ModeId,ModeUpdate>,
 }
-impl Updatable<&ModesUpdate> for Modes{
-	fn insert(&mut self,update:&ModesUpdate){
-		for (mode,mode_update) in &update.modes{
+impl Updatable<ModesUpdate> for Modes{
+	fn update(&mut self,update:ModesUpdate){
+		for (mode,mode_update) in update.modes{
 			if let Some(mode)=self.modes.get_mut(mode.0 as usize){
-				mode.insert(mode_update);
-			}
-		}
-	}
-	fn remove(&mut self,update:&ModesUpdate){
-		for (mode,mode_update) in &update.modes{
-			if let Some(mode)=self.modes.get_mut(mode.0 as usize){
-				mode.remove(mode_update);
+				mode.update(mode_update);
 			}
 		}
 	}

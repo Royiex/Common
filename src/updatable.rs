@@ -1,10 +1,4 @@
 pub trait Updatable<Updater>{
-	fn insert(&mut self,update:Updater);
-	fn remove(&mut self,update:Updater);
-}
-//what if do like this
-//*
-pub trait Updatable2<Updater>{
 	fn update(&mut self,update:Updater);
 }
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
@@ -37,14 +31,14 @@ struct OuterUpdate{
 	//#[updatable(Update)]
 	//inners:std::collections::HashMap<InnerId,InnerUpdate>,
 }
-impl Updatable2<InnerUpdate> for Inner{
+impl Updatable<InnerUpdate> for Inner{
 	fn update(&mut self,update:InnerUpdate){
 		if let Some(enabled)=update.enabled{
 			self.enabled=enabled;
 		}
 	}
 }
-impl Updatable2<OuterUpdate> for Outer{
+impl Updatable<OuterUpdate> for Outer{
 	fn update(&mut self,update:OuterUpdate){
 		for (id,up) in update.inners{
 			match up{

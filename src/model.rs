@@ -62,17 +62,8 @@ pub struct Models{
 	models:HashMap<ModelId,Model>,
 }
 impl Updatable<Models> for Models{
-	fn insert(&mut self,update:Models){
+	fn update(&mut self,update:Models){
 		self.indexed_models.extend(update.indexed_models);
 		self.models.extend(update.models);
-	}
-	fn remove(&mut self,update:Models){
-		for (indexed_model_id,_) in &update.indexed_models{
-			self.indexed_models.remove(indexed_model_id);
-		}
-		for (model_id,_) in &update.models{
-			self.models.remove(model_id);
-		}
-		todo!("stop cloning models for remove");
 	}
 }
