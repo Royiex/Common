@@ -1,11 +1,11 @@
-use std::collections::HashMap;
-
 use crate::model;
 use crate::gameplay_modes;
+use crate::gameplay_attributes;
 //this is the current map data loaded in memory
 pub struct Map{
-	modes:gameplay_modes::Modes,
-	models:model::Models,
+	pub modes:gameplay_modes::Modes,
+	pub models:model::Models,
+	pub attributes:Vec<gameplay_attributes::CollisionAttributes>,
 	//RenderPattern
-	textures:HashMap<u32,Vec<u8>>,
+	pub textures:Vec<Vec<u8>>,
 }

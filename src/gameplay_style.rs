@@ -3,26 +3,26 @@ const VALVE_SCALE:i64=16;
 use crate::integer::{Time,Ratio64,Planar64,Planar64Vec3};
 
 pub struct StyleModifiers{
-	controls_used:u32,//controls which are allowed to pass into gameplay
-	controls_mask:u32,//controls which are masked from control state (e.g. jump in scroll style)
-	strafe:Option<StrafeSettings>,
-	jump_impulse:JumpImpulse,
-	jump_calculation:JumpCalculation,
-	static_friction:Planar64,
-	kinetic_friction:Planar64,
-	walk_speed:Planar64,
-	walk_accel:Planar64,
-	ladder_speed:Planar64,
-	ladder_accel:Planar64,
-	ladder_dot:Planar64,
-	swim_speed:Planar64,
-	mass:Planar64,
-	mv:Planar64,
-	surf_slope:Option<Planar64>,
-	rocket_force:Option<Planar64>,
-	gravity:Planar64Vec3,
-	hitbox:Hitbox,
-	camera_offset:Planar64Vec3,
+	pub controls_used:u32,//controls which are allowed to pass into gameplay
+	pub controls_mask:u32,//controls which are masked from control state (e.g. jump in scroll style)
+	pub strafe:Option<StrafeSettings>,
+	pub jump_impulse:JumpImpulse,
+	pub jump_calculation:JumpCalculation,
+	pub static_friction:Planar64,
+	pub kinetic_friction:Planar64,
+	pub walk_speed:Planar64,
+	pub walk_accel:Planar64,
+	pub ladder_speed:Planar64,
+	pub ladder_accel:Planar64,
+	pub ladder_dot:Planar64,
+	pub swim_speed:Planar64,
+	pub mass:Planar64,
+	pub mv:Planar64,
+	pub surf_slope:Option<Planar64>,
+	pub rocket_force:Option<Planar64>,
+	pub gravity:Planar64Vec3,
+	pub hitbox:Hitbox,
+	pub camera_offset:Planar64Vec3,
 }
 impl std::default::Default for StyleModifiers{
 	fn default()->Self{
@@ -30,18 +30,18 @@ impl std::default::Default for StyleModifiers{
 	}
 }
 impl StyleModifiers{
-	const CONTROL_MOVEFORWARD:u32=0b00000001;
-	const CONTROL_MOVEBACK:u32=0b00000010;
-	const CONTROL_MOVERIGHT:u32=0b00000100;
-	const CONTROL_MOVELEFT:u32=0b00001000;
-	const CONTROL_MOVEUP:u32=0b00010000;
-	const CONTROL_MOVEDOWN:u32=0b00100000;
-	const CONTROL_JUMP:u32=0b01000000;
-	const CONTROL_ZOOM:u32=0b10000000;
+	pub const CONTROL_MOVEFORWARD:u32=0b00000001;
+	pub const CONTROL_MOVEBACK:u32=0b00000010;
+	pub const CONTROL_MOVERIGHT:u32=0b00000100;
+	pub const CONTROL_MOVELEFT:u32=0b00001000;
+	pub const CONTROL_MOVEUP:u32=0b00010000;
+	pub const CONTROL_MOVEDOWN:u32=0b00100000;
+	pub const CONTROL_JUMP:u32=0b01000000;
+	pub const CONTROL_ZOOM:u32=0b10000000;
 
-	const RIGHT_DIR:Planar64Vec3=Planar64Vec3::X;
-	const UP_DIR:Planar64Vec3=Planar64Vec3::Y;
-	const FORWARD_DIR:Planar64Vec3=Planar64Vec3::NEG_Z;
+	pub const RIGHT_DIR:Planar64Vec3=Planar64Vec3::X;
+	pub const UP_DIR:Planar64Vec3=Planar64Vec3::Y;
+	pub const FORWARD_DIR:Planar64Vec3=Planar64Vec3::NEG_Z;
 
 	fn neo()->Self{
 		Self{
@@ -72,7 +72,7 @@ impl StyleModifiers{
 		}
 	}
 
-	fn roblox_bhop()->Self{
+	pub fn roblox_bhop()->Self{
 		Self{
 			controls_used:!0,
 			controls_mask:!0,//&!(Self::CONTROL_MOVEUP|Self::CONTROL_MOVEDOWN),
@@ -211,13 +211,13 @@ impl StyleModifiers{
 	}
 }
 
-enum JumpCalculation{
+pub enum JumpCalculation{
 	Capped,//roblox
 	Energy,//new
 	Linear,//source
 }
 
-enum JumpImpulse{
+pub enum JumpImpulse{
 	FromTime(Time),//jump time is invariant across mass and gravity changes
 	FromHeight(Planar64),//jump height is invariant across mass and gravity changes
 	FromDeltaV(Planar64),//jump velocity is invariant across mass and gravity changes
@@ -228,20 +228,32 @@ enum JumpImpulse{
 //Energy means it adds energy
 //Linear means it linearly adds on
 
-enum EnableStrafe{
+pub enum EnableStrafe{
 	Always,
 	MaskAny(u32),//hsw, shsw
 	MaskAll(u32),
 	//Function(Box<dyn Fn(u32)->bool>),
 }
 
-struct StrafeSettings{
+pub struct StrafeSettings{
 	enable:EnableStrafe,
 	air_accel_limit:Option<Planar64>,
 	tick_rate:Ratio64,
 }
+impl StrafeSettings{
+	pub fn next_tick(&self,time:Time)->Time{
+		Time::from_nanos(self.tick_rate.rhs_div_int(self.tick_rate.mul_int(time.nanos())+1))
+	}
+	pub fn mask(&self,controls:u32)->bool{
+		match self.enable{
+			EnableStrafe::Always=>true,
+			EnableStrafe::MaskAny(mask)=>mask&controls!=0,
+			EnableStrafe::MaskAll(mask)=>mask&controls==mask,
+		}
+	}
+}
 
-enum HitboxMesh{
+pub enum HitboxMesh{
 	Box,//source
 	Cylinder,//roblox
 	//Sphere,//roblox old physics
@@ -250,9 +262,9 @@ enum HitboxMesh{
 	//DualCone,
 }
 
-struct Hitbox{
-	halfsize:Planar64Vec3,
-	mesh:HitboxMesh,
+pub struct Hitbox{
+	pub halfsize:Planar64Vec3,
+	pub mesh:HitboxMesh,
 }
 impl Hitbox{
 	fn roblox()->Self{

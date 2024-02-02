@@ -5,9 +5,9 @@ use crate::updatable::Updatable;
 
 #[derive(Clone)]
 pub struct StageElement{
-	stage:StageId,//which stage spawn to send to
-	force:bool,//allow setting to lower spawn id i.e. 7->3
-	behaviour:StageElementBehaviour
+	pub stage:StageId,//which stage spawn to send to
+	pub force:bool,//allow setting to lower spawn id i.e. 7->3
+	pub behaviour:StageElementBehaviour
 }
 impl StageElement{
 	pub fn new(stage_id:u32,force:bool,behaviour:StageElementBehaviour)->Self{
@@ -33,8 +33,16 @@ pub enum StageElementBehaviour{
 
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub struct CheckpointId(usize);
-#[derive(Clone,Hash,Eq,PartialEq)]
+#[derive(Clone,Hash,Eq,PartialEq,Ord,PartialOrd)]
 pub struct StageId(u32);
+impl StageId{
+	pub const fn id(id:u32)->Self{
+		Self(id)
+	}
+	pub const fn get(self)->u32{
+		self.0
+	}
+}
 pub struct Stage{
 	spawn:ModelId,
 	//open world support lol
@@ -42,6 +50,16 @@ pub struct Stage{
 	//other behaviour models of this stage can have
 	ordered_checkpoints:HashMap<CheckpointId,ModelId>,
 	unordered_checkpoints:HashSet<ModelId>,
+}
+impl Stage{
+	pub fn new(spawn:ModelId)->Self{
+		Self{
+			spawn,
+			ordered_checkpoints_count:0,
+			ordered_checkpoints:HashMap::new(),
+			unordered_checkpoints:HashSet::new(),
+		}
+	}
 }
 #[derive(Default)]
 pub struct StageUpdate{
@@ -62,13 +80,16 @@ pub enum Zone{
 	Finish,
 	Anticheat,
 }
-#[derive(Clone,Hash,Eq,PartialEq)]
+#[derive(Clone,Hash,Eq,PartialEq,Ord,PartialOrd)]
 pub struct ModeId(u32);
 impl ModeId{
 	pub const MAIN:Self=Self(0);
 	pub const BONUS:Self=Self(1);
-	pub const fn mode(mode_id:u32)->Self{
-		Self(mode_id)
+	pub const fn id(id:u32)->Self{
+		Self(id)
+	}
+	pub const fn get(&self)->u32{
+		self.0
 	}
 }
 pub struct Mode{
@@ -81,8 +102,36 @@ pub struct Mode{
 	jump_limit:HashMap<ModelId,u32>,
 }
 impl Mode{
+	pub fn new(style:gameplay_style::StyleModifiers,start:ModelId)->Self{
+		Self{
+			style,
+			start,
+			zones:HashMap::new(),
+			stages:Vec::new(),
+			elements:HashMap::new(),
+			jump_limit:HashMap::new(),
+		}
+	}
+	pub fn push_stage(&mut self,stage:Stage){
+		self.stages.push(stage)
+	}
+	pub fn get_stage_mut(&mut self,stage:StageId)->Option<&mut Stage>{
+		self.stages.get_mut(stage.0 as usize)
+	}
 	pub fn get_spawn_model_id(&self,stage:StageId)->Option<ModelId>{
 		self.stages.get(stage.0 as usize).map(|s|s.spawn)
+	}
+	pub fn get_zone(&self,model_id:ModelId)->Option<&Zone>{
+		self.zones.get(&model_id)
+	}
+	pub fn get_stage(&self,stage_id:StageId)->Option<&Stage>{
+		self.stages.get(stage_id.0 as usize)
+	}
+	pub fn get_element(&self,model_id:ModelId)->Option<&StageElement>{
+		self.elements.get(&model_id)
+	}
+	pub fn get_jump_limit(&self,model_id:ModelId)->Option<u32>{
+		self.jump_limit.get(&model_id).copied()
 	}
 	//TODO: put this in the SNF
 	pub fn denormalize_data(&mut self){
@@ -164,6 +213,9 @@ impl Modes{
 		Self{
 			modes,
 		}
+	}
+	pub fn push_mode(&mut self,mode:Mode){
+		self.modes.push(mode)
 	}
 	pub fn get_mode(&self,mode:ModeId)->Option<&Mode>{
 		self.modes.get(mode.0 as usize)

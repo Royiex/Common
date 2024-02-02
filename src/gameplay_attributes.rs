@@ -1,3 +1,4 @@
+use crate::model;
 use crate::integer::{Time,Planar64,Planar64Vec3};
 
 //you have this effect while in contact
@@ -77,7 +78,7 @@ pub struct Wormhole{
 	//destination does not need to be another wormhole
 	//this defines a one way portal to a destination model transform
 	//two of these can create a two way wormhole
-	pub destination_model_id:u32,
+	pub destination_model:model::ModelId,
 	//(position,angles)*=origin.transform.inverse()*destination.transform
 }
 //attributes listed in order of handling
@@ -132,6 +133,12 @@ impl IntersectingAttributes{
 	}
 }
 pub struct CollisionAttributesId(u32);
+impl CollisionAttributesId{
+	pub fn new(id:u32)->Self{
+		Self(id)
+	}
+}
+#[derive(Clone,Hash,Eq,PartialEq)]
 pub enum CollisionAttributes{
 	Decoration,//visual only
 	Contact{//track whether you are contacting the object

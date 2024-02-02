@@ -34,6 +34,11 @@ pub struct IndexedPhysicsGroup{
 //This is a superset of PhysicsModel and GraphicsModel
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub struct IndexedModelId(u32);
+impl IndexedModelId{
+	pub const fn id(id:u32)->Self{
+		Self(id)
+	}
+}
 pub struct IndexedModel{
 	pub unique_pos:Vec<Planar64Vec3>,//Unit32Vec3
 	pub unique_normal:Vec<Planar64Vec3>,//Unit32Vec3
@@ -50,6 +55,11 @@ pub struct IndexedModel{
 
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub struct ModelId(u32);
+impl ModelId{
+	pub const fn id(id:u32)->Self{
+		Self(id)
+	}
+}
 pub struct Model{
 	pub model:IndexedModelId,
 	pub attributes:gameplay_attributes::CollisionAttributesId,
@@ -60,6 +70,17 @@ pub struct Model{
 pub struct Models{
 	indexed_models:HashMap<IndexedModelId,IndexedModel>,
 	models:HashMap<ModelId,Model>,
+}
+impl Models{
+	pub fn new(
+		indexed_models:HashMap<IndexedModelId,IndexedModel>,
+		models:HashMap<ModelId,Model>,
+	)->Self{
+		Self{
+			indexed_models,
+			models,
+		}
+	}
 }
 impl Updatable<Models> for Models{
 	fn update(&mut self,update:Models){
