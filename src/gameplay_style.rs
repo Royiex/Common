@@ -1,4 +1,4 @@
-const VALVE_SCALE:i64=16;
+const VALVE_SCALE:Planar64=Planar64::raw(1<<28);// 1/16
 
 use crate::integer::{Time,Ratio64,Planar64,Planar64Vec3};
 
@@ -138,13 +138,13 @@ impl StyleModifiers{
 				air_accel_limit:Some(Planar64::raw(150<<28)*100),
 				tick_rate:Ratio64::new(100,Time::ONE_SECOND.nanos() as u64).unwrap(),
 			}),
-			jump_impulse:JumpImpulse::FromHeight(Planar64::int(52)/VALVE_SCALE),
+			jump_impulse:JumpImpulse::FromHeight(Planar64::int(52)*VALVE_SCALE),
 			jump_calculation:JumpCalculation::Linear,
-			gravity:Planar64Vec3::int(0,-800,0)/VALVE_SCALE,
+			gravity:Planar64Vec3::int(0,-800,0)*VALVE_SCALE,
 			static_friction:Planar64::int(2),//?
 			kinetic_friction:Planar64::int(3),//?
 			mass:Planar64::int(1),
-			mv:Planar64::raw(30)/VALVE_SCALE,
+			mv:Planar64::raw(30)*VALVE_SCALE,
 			rocket_force:None,
 			walk_speed:Planar64::int(18),//?
 			walk_accel:Planar64::int(90),//?
@@ -154,7 +154,7 @@ impl StyleModifiers{
 			swim_speed:Planar64::int(12),//?
 			surf_slope:Some(Planar64::raw(3787805118)),// normal.y=0.75
 			hitbox:Hitbox::source(),
-			camera_offset:(Planar64Vec3::int(0,64,0)-Planar64Vec3::int(0,73,0)/2)/VALVE_SCALE,
+			camera_offset:(Planar64Vec3::int(0,64,0)-Planar64Vec3::int(0,73,0)/2)*VALVE_SCALE,
 		}
 	}
 	fn source_surf()->Self{
@@ -163,16 +163,16 @@ impl StyleModifiers{
 			controls_mask:!0,//&!(Self::CONTROL_MOVEUP|Self::CONTROL_MOVEDOWN),
 			strafe:Some(StrafeSettings{
 				enable:EnableStrafe::Always,
-				air_accel_limit:Some(Planar64::int(150)*66/VALVE_SCALE),
+				air_accel_limit:Some(Planar64::int(150)*66*VALVE_SCALE),
 				tick_rate:Ratio64::new(66,Time::ONE_SECOND.nanos() as u64).unwrap(),
 			}),
-			jump_impulse:JumpImpulse::FromHeight(Planar64::int(52)/VALVE_SCALE),
+			jump_impulse:JumpImpulse::FromHeight(Planar64::int(52)*VALVE_SCALE),
 			jump_calculation:JumpCalculation::Linear,
-			gravity:Planar64Vec3::int(0,-800,0)/VALVE_SCALE,
+			gravity:Planar64Vec3::int(0,-800,0)*VALVE_SCALE,
 			static_friction:Planar64::int(2),//?
 			kinetic_friction:Planar64::int(3),//?
 			mass:Planar64::int(1),
-			mv:Planar64::int(30)/VALVE_SCALE,
+			mv:Planar64::int(30)*VALVE_SCALE,
 			rocket_force:None,
 			walk_speed:Planar64::int(18),//?
 			walk_accel:Planar64::int(90),//?
@@ -182,7 +182,7 @@ impl StyleModifiers{
 			swim_speed:Planar64::int(12),//?
 			surf_slope:Some(Planar64::raw(3787805118)),// normal.y=0.75
 			hitbox:Hitbox::source(),
-			camera_offset:(Planar64Vec3::int(0,64,0)-Planar64Vec3::int(0,73,0)/2)/VALVE_SCALE,
+			camera_offset:(Planar64Vec3::int(0,64,0)-Planar64Vec3::int(0,73,0)/2)*VALVE_SCALE,
 		}
 	}
 	fn roblox_rocket()->Self{
@@ -275,7 +275,7 @@ impl Hitbox{
 	}
 	fn source()->Self{
 		Self{
-			halfsize:Planar64Vec3::raw(33,73,33)/2/VALVE_SCALE,
+			halfsize:Planar64Vec3::raw(33,73,33)/2*VALVE_SCALE,
 			mesh:HitboxMesh::Box,
 		}
 	}
