@@ -132,9 +132,10 @@ impl IntersectingAttributes{
 		self.water.is_some()
 	}
 }
+#[derive(Clone,Copy)]
 pub struct CollisionAttributesId(u32);
 impl CollisionAttributesId{
-	pub fn new(id:u32)->Self{
+	pub fn id(id:u32)->Self{
 		Self(id)
 	}
 }

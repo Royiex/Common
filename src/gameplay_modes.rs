@@ -33,7 +33,7 @@ pub enum StageElementBehaviour{
 
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub struct CheckpointId(usize);
-#[derive(Clone,Hash,Eq,PartialEq,Ord,PartialOrd)]
+#[derive(Clone,Copy,Hash,Eq,PartialEq,Ord,PartialOrd)]
 pub struct StageId(u32);
 impl StageId{
 	pub const fn id(id:u32)->Self{
