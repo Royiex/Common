@@ -160,25 +160,3 @@ pub struct Model{
 	pub color:Color4,//transparency is in here
 	pub transform:Planar64Affine3,
 }
-
-pub struct Models{
-	pub indexed_models:HashMap<IndexedModelId,IndexedModel>,
-	pub models:HashMap<ModelId,Model>,
-}
-impl Models{
-	pub fn new(
-		indexed_models:HashMap<IndexedModelId,IndexedModel>,
-		models:HashMap<ModelId,Model>,
-	)->Self{
-		Self{
-			indexed_models,
-			models,
-		}
-	}
-}
-impl Updatable<Models> for Models{
-	fn update(&mut self,update:Models){
-		self.indexed_models.extend(update.indexed_models);
-		self.models.extend(update.models);
-	}
-}
