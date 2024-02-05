@@ -84,7 +84,15 @@ impl PolygonGroupId{
 }
 pub enum PolygonGroup{
 	PolygonList(Vec<IndexedVertexList>),
-	//TriangleStrip(Vec<IndexedVertexList>),
+	//TriangleStrip(Vec<VertexId>),
+}
+impl PolygonGroup{
+	pub fn polys(&self)->impl Iterator<Item=&[VertexId]>{
+		match self{
+			PolygonGroup::PolygonList(polys)=>return polys.iter().map(|poly|poly.vertices.as_slice()),
+			//PolygonGroup::TriangleStrip(strip)=>return strip.windows(3).enumerate().map(|(i,s)|if i&0!=0{return s.iter().rev()}else{return s.iter()}),
+		}
+	}
 }
 /// Ah yes, a group of things to render at the same time
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
