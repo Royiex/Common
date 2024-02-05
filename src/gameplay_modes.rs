@@ -5,14 +5,14 @@ use crate::updatable::Updatable;
 
 #[derive(Clone)]
 pub struct StageElement{
-	pub stage:StageId,//which stage spawn to send to
+	pub stage_id:StageId,//which stage spawn to send to
 	pub force:bool,//allow setting to lower spawn id i.e. 7->3
 	pub behaviour:StageElementBehaviour
 }
 impl StageElement{
 	pub fn new(stage_id:u32,force:bool,behaviour:StageElementBehaviour)->Self{
 		Self{
-			stage:StageId(stage_id),
+			stage_id:StageId(stage_id),
 			force,
 			behaviour,
 		}
@@ -32,13 +32,26 @@ pub enum StageElementBehaviour{
 }
 
 #[derive(Clone,Copy,Hash,Eq,PartialEq)]
-pub struct CheckpointId(usize);
-#[derive(Clone,Copy,Hash,Eq,PartialEq,Ord,PartialOrd)]
-pub struct StageId(u32);
-impl StageId{
+pub struct CheckpointId(u32);
+impl CheckpointId{
+	#[inline]
 	pub const fn id(id:u32)->Self{
 		Self(id)
 	}
+	#[inline]
+	pub const fn get(self)->u32{
+		self.0
+	}
+}
+#[derive(Clone,Copy,Hash,Eq,PartialEq,Ord,PartialOrd)]
+pub struct StageId(u32);
+impl StageId{
+	pub const FIRST:Self=Self(0);
+	#[inline]
+	pub const fn id(id:u32)->Self{
+		Self(id)
+	}
+	#[inline]
 	pub const fn get(self)->u32{
 		self.0
 	}
@@ -59,6 +72,10 @@ impl Stage{
 			ordered_checkpoints:HashMap::new(),
 			unordered_checkpoints:HashSet::new(),
 		}
+	}
+	#[inline]
+	pub const fn spawn(&self)->ModelId{
+		self.spawn
 	}
 }
 #[derive(Default)]
@@ -85,9 +102,11 @@ pub struct ModeId(u32);
 impl ModeId{
 	pub const MAIN:Self=Self(0);
 	pub const BONUS:Self=Self(1);
+	#[inline]
 	pub const fn id(id:u32)->Self{
 		Self(id)
 	}
+	#[inline]
 	pub const fn get(&self)->u32{
 		self.0
 	}
@@ -139,20 +158,20 @@ impl Mode{
 		self.zones.insert(self.start,Zone::Start);
 		for (stage_id,stage) in self.stages.iter().enumerate(){
 			self.elements.insert(stage.spawn,StageElement{
-				stage:StageId(stage_id as u32),
+				stage_id:StageId(stage_id as u32),
 				force:false,
 				behaviour:StageElementBehaviour::SpawnAt,
 			});
 			for (_,&model) in &stage.ordered_checkpoints{
 				self.elements.insert(model,StageElement{
-					stage:StageId(stage_id as u32),
+					stage_id:StageId(stage_id as u32),
 					force:false,
 					behaviour:StageElementBehaviour::Checkpoint,
 				});
 			}
 			for &model in &stage.unordered_checkpoints{
 				self.elements.insert(model,StageElement{
-					stage:StageId(stage_id as u32),
+					stage_id:StageId(stage_id as u32),
 					force:false,
 					behaviour:StageElementBehaviour::Checkpoint,
 				});
