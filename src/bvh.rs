@@ -9,23 +9,24 @@ use crate::aabb::Aabb;
 //start with bisection into octrees because a bad bvh is still 1000x better than no bvh
 //sort the centerpoints on each axis (3 lists)
 //bv is put into octant based on whether it is upper or lower in each list
-enum BvhNodeContent{
-	Branch(Vec<BvhNode>),
-	Leaf(usize),
+
+enum BvhNodeContent<T>{
+	Branch(Vec<BvhNode<T>>),
+	Leaf(T),
 }
-impl Default for BvhNodeContent{
+impl<T> Default for BvhNodeContent<T>{
 	fn default()->Self{
 		Self::Branch(Vec::new())
 	}
 }
 #[derive(Default)]
-pub struct BvhNode{
-	content:BvhNodeContent,
+pub struct BvhNode<T>{
+	content:BvhNodeContent<T>,
 	aabb:Aabb,
 }
 
-impl BvhNode{
-	pub fn the_tester<F:FnMut(usize)>(&self,aabb:&Aabb,f:&mut F){
+impl<T:Copy+Eq+std::hash::Hash> BvhNode<T>{
+	pub fn the_tester<F:FnMut(T)>(&self,aabb:&Aabb,f:&mut F){
 		match &self.content{
 			&BvhNodeContent::Leaf(model)=>f(model),
 			BvhNodeContent::Branch(children)=>for child in children{
@@ -41,11 +42,11 @@ impl BvhNode{
 	}
 }
 
-pub fn generate_bvh(boxen:Vec<Aabb>)->BvhNode{
-	generate_bvh_node(boxen.into_iter().enumerate().collect())
+pub fn generate_bvh<T:Copy+Eq+std::hash::Hash,F:Fn(usize)->T>(boxen:Vec<Aabb>,type_wrapper:F)->BvhNode<T>{
+	generate_bvh_node(boxen.into_iter().enumerate().map(|(i,b)|(type_wrapper(i),b)).collect())
 }
 
-fn generate_bvh_node(boxen:Vec<(usize,Aabb)>)->BvhNode{
+fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNode<T>{
 	let n=boxen.len();
 	if n<20{
 		let mut aabb=Aabb::default();
