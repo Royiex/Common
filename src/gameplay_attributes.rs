@@ -56,7 +56,7 @@ pub enum SetTrajectory{
 	Velocity(Planar64Vec3),//SetVelocity
 }
 impl SetTrajectory{
-	fn is_velocity(&self)->bool{
+	pub const fn is_velocity(&self)->bool{
 		match self{
 			SetTrajectory::AirTime(_)
 			|SetTrajectory::Height(_)
@@ -90,7 +90,7 @@ pub struct GeneralAttributes{
 	pub accelerator:Option<Accelerator>,
 }
 impl GeneralAttributes{
-	pub fn any(&self)->bool{
+	pub const fn any(&self)->bool{
 		self.booster.is_some()
 		||self.trajectory.is_some()
 		||self.wormhole.is_some()
@@ -119,7 +119,7 @@ pub struct ContactingAttributes{
 	pub contact_behaviour:Option<ContactingBehaviour>,
 }
 impl ContactingAttributes{
-	pub fn any(&self)->bool{
+	pub const fn any(&self)->bool{
 		self.contact_behaviour.is_some()
 	}
 }
@@ -128,14 +128,14 @@ pub struct IntersectingAttributes{
 	pub water:Option<IntersectingWater>,
 }
 impl IntersectingAttributes{
-	pub fn any(&self)->bool{
+	pub const fn any(&self)->bool{
 		self.water.is_some()
 	}
 }
 #[derive(Clone,Copy)]
 pub struct CollisionAttributesId(u32);
 impl CollisionAttributesId{
-	pub fn id(id:u32)->Self{
+	pub const fn id(id:u32)->Self{
 		Self(id)
 	}
 }
