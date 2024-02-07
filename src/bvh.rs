@@ -42,11 +42,7 @@ impl<T:Copy+Eq+std::hash::Hash> BvhNode<T>{
 	}
 }
 
-pub fn generate_bvh<T:Copy+Eq+std::hash::Hash,F:Fn(usize)->T>(boxen:Vec<Aabb>,type_wrapper:F)->BvhNode<T>{
-	generate_bvh_node(boxen.into_iter().enumerate().map(|(i,b)|(type_wrapper(i),b)).collect())
-}
-
-fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNode<T>{
+pub fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNode<T>{
 	let n=boxen.len();
 	if n<20{
 		let mut aabb=Aabb::default();
