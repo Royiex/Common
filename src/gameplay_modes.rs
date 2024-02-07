@@ -79,7 +79,7 @@ pub enum Zone{
 	Finish,
 	Anticheat,
 }
-#[derive(Clone,Hash,id::Id,Eq,PartialEq,Ord,PartialOrd)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq,Ord,PartialOrd)]
 pub struct ModeId(u32);
 impl ModeId{
 	pub const MAIN:Self=Self(0);
