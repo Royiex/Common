@@ -25,6 +25,11 @@ pub struct VertexId(u32);
 pub struct IndexedVertexList{
 	vertices:Vec<VertexId>,
 }
+impl IndexedVertexList{
+	pub const fn new(vertices:Vec<VertexId>)->Self{
+		Self{vertices}
+	}
+}
 #[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct PolygonGroupId(u32);
 pub enum PolygonGroup{
