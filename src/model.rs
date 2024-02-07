@@ -5,54 +5,14 @@ use crate::updatable::Updatable;
 
 pub type TextureCoordinate=glam::Vec2;
 pub type Color4=glam::Vec4;
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct PositionId(u32);
-impl PositionId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct TextureCoordinateId(u32);
-impl TextureCoordinateId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct NormalId(u32);
-impl NormalId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct ColorId(u32);
-impl ColorId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
 #[derive(Clone,Hash,PartialEq,Eq)]
 pub struct IndexedVertex{
 	pub pos:PositionId,
@@ -60,28 +20,13 @@ pub struct IndexedVertex{
 	pub normal:NormalId,
 	pub color:ColorId,
 }
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct VertexId(u32);
-impl VertexId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
 pub struct IndexedVertexList{
 	vertices:Vec<VertexId>,
 }
-#[derive(Clone,Copy,Hash,PartialEq,Eq)]
+#[derive(Clone,Copy,Hash,id::Id,PartialEq,Eq)]
 pub struct PolygonGroupId(u32);
-impl PolygonGroupId{
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-}
 pub enum PolygonGroup{
 	PolygonList(Vec<IndexedVertexList>),
 	//TriangleStrip(Vec<VertexId>),
@@ -100,20 +45,10 @@ impl PolygonGroup{
 	}
 }
 /// Ah yes, a group of things to render at the same time
-#[derive(Clone,Copy,Hash,Eq,PartialEq)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct RenderGroupId(u32);
-impl RenderGroupId{
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-}
-#[derive(Clone,Copy,Hash,Eq,PartialEq)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct TextureId(u32);
-impl TextureId{
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-}
 #[derive(Default)]
 pub struct RenderConfig{
 	texture:Option<TextureId>,
@@ -136,13 +71,8 @@ pub struct IndexedPhysicsGroup{
 	pub groups:Vec<PolygonGroupId>,
 }
 //This is a superset of PhysicsModel and GraphicsModel
-#[derive(Clone,Copy,Hash,Eq,PartialEq)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct IndexedModelId(u32);
-impl IndexedModelId{
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-}
 pub struct IndexedModel{
 	pub unique_pos:Vec<Planar64Vec3>,//Unit32Vec3
 	pub unique_normal:Vec<Planar64Vec3>,//Unit32Vec3
@@ -157,16 +87,8 @@ pub struct IndexedModel{
 	pub physics_groups:Vec<IndexedPhysicsGroup>,
 }
 
-#[derive(Debug,Clone,Copy,Hash,Eq,PartialEq)]
+#[derive(Debug,Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct ModelId(u32);
-impl ModelId{
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	pub const fn get(&self)->u32{
-		self.0
-	}
-}
 pub struct Model{
 	pub model:IndexedModelId,
 	pub attributes:gameplay_attributes::CollisionAttributesId,

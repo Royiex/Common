@@ -31,30 +31,12 @@ pub enum StageElementBehaviour{
 	Checkpoint,//this is a combined behaviour for Ordered & Unordered in case a model is used multiple times or for both.
 }
 
-#[derive(Clone,Copy,Hash,Eq,PartialEq)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct CheckpointId(u32);
-impl CheckpointId{
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
-}
-#[derive(Clone,Copy,Hash,Eq,PartialEq,Ord,PartialOrd)]
+#[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq,Ord,PartialOrd)]
 pub struct StageId(u32);
 impl StageId{
 	pub const FIRST:Self=Self(0);
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(self)->u32{
-		self.0
-	}
 }
 pub struct Stage{
 	spawn:ModelId,
@@ -97,19 +79,11 @@ pub enum Zone{
 	Finish,
 	Anticheat,
 }
-#[derive(Clone,Hash,Eq,PartialEq,Ord,PartialOrd)]
+#[derive(Clone,Hash,id::Id,Eq,PartialEq,Ord,PartialOrd)]
 pub struct ModeId(u32);
 impl ModeId{
 	pub const MAIN:Self=Self(0);
 	pub const BONUS:Self=Self(1);
-	#[inline]
-	pub const fn id(id:u32)->Self{
-		Self(id)
-	}
-	#[inline]
-	pub const fn get(&self)->u32{
-		self.0
-	}
 }
 pub struct Mode{
 	style:gameplay_style::StyleModifiers,
