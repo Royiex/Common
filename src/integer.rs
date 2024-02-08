@@ -296,7 +296,7 @@ impl Angle32{
 	pub const FRAC_PI_2:Self=Self(1<<30);
 	pub const PI:Self=Self(-1<<31);
 	#[inline]
-	pub fn wrap_from_i64(theta:i64)->Self{
+	pub const fn wrap_from_i64(theta:i64)->Self{
 		//take lower bits
 		//note: this was checked on compiler explorer and compiles to 1 instruction!
 		Self(i32::from_ne_bytes(((theta&((1<<32)-1)) as u32).to_ne_bytes()))
@@ -308,7 +308,7 @@ impl Angle32{
 		Self(theta.clamp(i32::MIN as i64,i32::MAX as i64) as i32)
 	}
 	#[inline]
-	pub fn get(&self)->i32{
+	pub const fn get(&self)->i32{
 		self.0
 	}
 	/// Clamps the value towards the midpoint of the range.
