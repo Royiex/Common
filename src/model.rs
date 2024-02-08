@@ -1,7 +1,5 @@
-use std::collections::HashMap;
 use crate::integer::{Planar64Vec3,Planar64Affine3};
 use crate::gameplay_attributes;
-use crate::updatable::Updatable;
 
 pub type TextureCoordinate=glam::Vec2;
 pub type Color4=glam::Vec4;

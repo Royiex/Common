@@ -2,6 +2,7 @@ const VALVE_SCALE:Planar64=Planar64::raw(1<<28);// 1/16
 
 use crate::integer::{Time,Ratio64,Planar64,Planar64Vec3};
 
+#[derive(Clone)]
 pub struct StyleModifiers{
 	pub controls_used:u32,//controls which are allowed to pass into gameplay
 	pub controls_mask:u32,//controls which are masked from control state (e.g. jump in scroll style)
@@ -211,12 +212,14 @@ impl StyleModifiers{
 	}
 }
 
+#[derive(Clone)]
 pub enum JumpCalculation{
 	Capped,//roblox
 	Energy,//new
 	Linear,//source
 }
 
+#[derive(Clone)]
 pub enum JumpImpulse{
 	FromTime(Time),//jump time is invariant across mass and gravity changes
 	FromHeight(Planar64),//jump height is invariant across mass and gravity changes
@@ -228,6 +231,7 @@ pub enum JumpImpulse{
 //Energy means it adds energy
 //Linear means it linearly adds on
 
+#[derive(Clone)]
 pub enum EnableStrafe{
 	Always,
 	MaskAny(u32),//hsw, shsw
@@ -235,6 +239,7 @@ pub enum EnableStrafe{
 	//Function(Box<dyn Fn(u32)->bool>),
 }
 
+#[derive(Clone)]
 pub struct StrafeSettings{
 	enable:EnableStrafe,
 	air_accel_limit:Option<Planar64>,
@@ -253,6 +258,7 @@ impl StrafeSettings{
 	}
 }
 
+#[derive(Clone)]
 pub enum HitboxMesh{
 	Box,//source
 	Cylinder,//roblox
@@ -262,6 +268,7 @@ pub enum HitboxMesh{
 	//DualCone,
 }
 
+#[derive(Clone)]
 pub struct Hitbox{
 	pub halfsize:Planar64Vec3,
 	pub mesh:HitboxMesh,

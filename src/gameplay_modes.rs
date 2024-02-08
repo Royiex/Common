@@ -38,6 +38,7 @@ pub struct StageId(u32);
 impl StageId{
 	pub const FIRST:Self=Self(0);
 }
+#[derive(Clone)]
 pub struct Stage{
 	spawn:ModelId,
 	//open world support lol
@@ -85,6 +86,7 @@ impl ModeId{
 	pub const MAIN:Self=Self(0);
 	pub const BONUS:Self=Self(1);
 }
+#[derive(Clone)]
 pub struct Mode{
 	style:gameplay_style::StyleModifiers,
 	start:ModelId,//when you press reset you go here
@@ -197,7 +199,7 @@ impl ModeUpdate{
 	}
 }
 
-#[derive(Default)]
+#[derive(Default,Clone)]
 pub struct Modes{
 	modes:Vec<Mode>,
 }
