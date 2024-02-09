@@ -132,7 +132,7 @@ impl IntersectingAttributes{
 		self.water.is_some()
 	}
 }
-#[derive(Clone,Copy,id::Id)]
+#[derive(Clone,Copy,id::Id,Hash,Eq,PartialEq)]
 pub struct CollisionAttributesId(u32);
 #[derive(Clone,Hash,Eq,PartialEq)]
 pub enum CollisionAttributes{
