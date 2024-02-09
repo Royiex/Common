@@ -42,9 +42,13 @@ impl<T:Copy+Eq+std::hash::Hash> BvhNode<T>{
 	}
 }
 
-pub fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNode<T>{
+pub fn generate_bvh<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNode<T>{
+	generate_bvh_node(boxen,false)
+}
+
+fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>,force:bool)->BvhNode<T>{
 	let n=boxen.len();
-	if n<20{
+	if force||n<20{
 		let mut aabb=Aabb::default();
 		let nodes=boxen.into_iter().map(|b|{
 			aabb.join(&b.1);
@@ -107,14 +111,19 @@ pub fn generate_bvh_node<T:Copy+Eq+std::hash::Hash>(boxen:Vec<(T,Aabb)>)->BvhNod
 			list_list[list_id].push((i,aabb));
 		}
 		let mut aabb=Aabb::default();
-		let children=list_list.into_iter().map(|b|{
-			let node=generate_bvh_node(b);
-			aabb.join(&node.aabb);
-			node
-		}).collect();
-		BvhNode{
-			content:BvhNodeContent::Branch(children),
-			aabb,
+		if list_list.len()==1{
+			generate_bvh_node(list_list.remove(0),true)
+		}else{
+			BvhNode{
+				content:BvhNodeContent::Branch(
+					list_list.into_iter().map(|b|{
+						let node=generate_bvh_node(b,false);
+						aabb.join(&node.aabb);
+						node
+					}).collect()
+				),
+				aabb,
+			}
 		}
 	}
 }
