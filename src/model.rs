@@ -106,6 +106,9 @@ pub struct Mesh{
 	pub unique_color:Vec<Color4>,
 	pub unique_vertices:Vec<IndexedVertex>,
 	//polygon groups are constant texture AND convexity slices
+	//note that this may need to be changed to be a list of individual faces
+	//for submeshes to work since face ids need to be consistent across submeshes
+	//so face == polygon_groups[face_id]
 	pub polygon_groups:Vec<PolygonGroup>,
 	//graphics indexed (by texture)
 	pub graphics_groups:Vec<IndexedGraphicsGroup>,
