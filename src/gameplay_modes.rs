@@ -5,21 +5,34 @@ use crate::updatable::Updatable;
 
 #[derive(Clone)]
 pub struct StageElement{
-	pub stage_id:StageId,//which stage spawn to send to
-	pub force:bool,//allow setting to lower spawn id i.e. 7->3
-	pub behaviour:StageElementBehaviour
+	stage_id:StageId,//which stage spawn to send to
+	force:bool,//allow setting to lower spawn id i.e. 7->3
+	behaviour:StageElementBehaviour
 }
 impl StageElement{
-	pub fn new(stage_id:u32,force:bool,behaviour:StageElementBehaviour)->Self{
+	#[inline]
+	pub const fn new(stage_id:u32,force:bool,behaviour:StageElementBehaviour)->Self{
 		Self{
 			stage_id:StageId(stage_id),
 			force,
 			behaviour,
 		}
 	}
+	#[inline]
+	pub const fn stage_id(&self)->StageId{
+		self.stage_id
+	}
+	#[inline]
+	pub const fn force(&self)->bool{
+		self.force
+	}
+	#[inline]
+	pub const fn behaviour(&self)->StageElementBehaviour{
+		self.behaviour
+	}
 }
 
-#[derive(Clone,Hash,Eq,PartialEq)]
+#[derive(Clone,Copy,Hash,Eq,PartialEq)]
 pub enum StageElementBehaviour{
 	SpawnAt,//must be standing on top to get effect. except cancollide false
 	Trigger,
@@ -33,6 +46,9 @@ pub enum StageElementBehaviour{
 
 #[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq)]
 pub struct CheckpointId(u32);
+impl CheckpointId{
+	pub const FIRST:Self=Self(0);
+}
 #[derive(Clone,Copy,Hash,id::Id,Eq,PartialEq,Ord,PartialOrd)]
 pub struct StageId(u32);
 impl StageId{
@@ -43,7 +59,8 @@ pub struct Stage{
 	spawn:ModelId,
 	//open world support lol
 	ordered_checkpoints_count:u32,
-	//other behaviour models of this stage can have
+	unordered_checkpoints_count:u32,
+	//currently loaded checkpoint models
 	ordered_checkpoints:HashMap<CheckpointId,ModelId>,
 	unordered_checkpoints:HashSet<ModelId>,
 }
@@ -52,6 +69,7 @@ impl Stage{
 		Self{
 			spawn,
 			ordered_checkpoints_count:0,
+			unordered_checkpoints_count:0,
 			ordered_checkpoints:HashMap::new(),
 			unordered_checkpoints:HashSet::new(),
 		}
@@ -59,6 +77,22 @@ impl Stage{
 	#[inline]
 	pub const fn spawn(&self)->ModelId{
 		self.spawn
+	}
+	#[inline]
+	pub const fn is_empty(&self)->bool{
+		self.is_complete(0,0)
+	}
+	#[inline]
+	pub const fn is_complete(&self,ordered_checkpoints_count:u32,unordered_checkpoints_count:u32)->bool{
+		self.ordered_checkpoints_count==ordered_checkpoints_count&&self.unordered_checkpoints_count==unordered_checkpoints_count
+	}
+	#[inline]
+	pub fn is_next_ordered_checkpoint(&self,next_ordered_checkpoint_id:CheckpointId,model_id:ModelId)->bool{
+		self.ordered_checkpoints.get(&next_ordered_checkpoint_id).is_some_and(|&next_checkpoint|model_id==next_checkpoint)
+	}
+	#[inline]
+	pub fn is_unordered_checkpoint(&self,model_id:ModelId)->bool{
+		self.unordered_checkpoints.contains(&model_id)
 	}
 }
 #[derive(Default)]
