@@ -1,6 +1,7 @@
 use std::collections::{HashSet,HashMap};
 use crate::model::ModelId;
 use crate::gameplay_style;
+use crate::gameplay_attributes;
 
 pub struct StageElement{
 	stage:StageId,//which stage spawn to send to
@@ -20,9 +21,24 @@ pub enum StageElementBehaviour{
 	Checkpoint,//this is a combined behaviour for Ordered & Unordered in case a model is used multiple times or for both.
 }
 
+pub enum ClipVelocity{
+	All,//Set velocity to spawn.velocity
+	Normal,//clip all out-of-plane velocity when spawning (always "top" face normal)
+	None,//no clipping
+}
+
+pub struct SpawnBehaviour{
+	set_camera_angles:bool,//set camera angles to spawn direction like source
+	//gain access to a ridiculous amount of velocity targetting options
+	set_velocity:Option<gameplay_attributes::SetTrajectory>,
+	//or just the basics
+	//set_velocity:ClipVelocity,
+}
+
 pub struct StageId(u32);
 pub struct Stage{
 	spawn:ModelId,
+	spawn_behaviour:SpawnBehaviour,
 	//other behaviour models of this stage can have
 	ordered_checkpoints:Vec<ModelId>,
 	unordered_checkpoints:HashSet<ModelId>,
