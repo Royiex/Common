@@ -56,7 +56,7 @@ pub enum SetTrajectory{
 	Velocity(Planar64Vec3),//SetVelocity
 }
 impl SetTrajectory{
-	pub const fn is_velocity(&self)->bool{
+	pub const fn is_absolute(&self)->bool{
 		match self{
 			SetTrajectory::AirTime(_)
 			|SetTrajectory::Height(_)
