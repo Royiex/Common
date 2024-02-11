@@ -9,6 +9,7 @@ impl Time{
 	pub const ONE_MILLISECOND:Self=Self(1_000_000);
 	pub const ONE_MICROSECOND:Self=Self(1_000);
 	pub const ONE_NANOSECOND:Self=Self(1);
+	pub const SCALE:Self=Self(19.44444);
 	#[inline]
 	pub fn from_secs(num:i64)->Self{
 		Self(Self::ONE_SECOND.0*num)
